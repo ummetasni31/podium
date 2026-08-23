@@ -92,7 +92,21 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </div>
       </section>
 
-      <footer><div className="shell footer-inner"><Link className="wordmark" href="/">PODIUM<span>°</span></Link><p>Attention, priced in public.</p><Link href="/rules">Rules & terms</Link></div></footer>
+      <footer>
+        <div className="shell footer-inner">
+          <Link className="wordmark" href="/">PODIUM<span>°</span></Link>
+          <p>Attention, priced in public.</p>
+          <Link href="/rules">Rules & terms</Link>
+        </div>
+        <div className="shell developer-strip">
+          <p>Developed by <strong>Umme Tasni</strong></p>
+          <nav className="developer-contact" aria-label="Developer contact links">
+            <a href="https://www.facebook.com/umme.tasni.2024" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">f</span>Facebook</a>
+            <a href="mailto:ummetasni15@gmail.com"><span aria-hidden="true">@</span>Gmail</a>
+            <a href="https://www.facebook.com/umme.tasni.2024" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">ig</span>Instagram</a>
+          </nav>
+        </div>
+      </footer>
     </main>
   );
 }
