@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Podium
 
-## Getting Started
+Podium is a public pay-to-rank leaderboard. A listing's rank is its total confirmed Stripe payments; the live price to take first place is the current leading total plus $5.
 
-First, run the development server:
+## Local setup
+
+Requirements: Node.js 20+, PostgreSQL, and a Stripe account with the Stripe CLI installed.
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Create the local environment file, then fill in the database and Stripe test credentials:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Prisma reads `.env` automatically. `.env.example` only documents the required variable names and is not loaded as application configuration.
+
+3. Apply the included database migration and generate Prisma Client:
+
+   ```bash
+   npx prisma migrate deploy
+   npx prisma generate
+   ```
+
+4. Start Next.js:
+
+   ```bash
+   npm run dev
+   ```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Test Stripe webhooks
+
+In another terminal, forward Stripe test events to the local webhook route:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy the printed `whsec_...` signing secret into `STRIPE_WEBHOOK_SECRET`, restart the development server, and complete a checkout with Stripe's test card `4242 4242 4242 4242`, any future expiry, and any CVC.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The success page never changes rank. Only a signature-verified `checkout.session.completed` webhook confirms the pending bid and increments the listing total.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Vercel deployment
 
-## Learn More
+Set `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, and `NEXT_PUBLIC_BASE_URL` in the Vercel project. Set `NEXT_PUBLIC_BASE_URL` to the production origin, apply migrations against the production database, and create a Stripe webhook endpoint for `https://your-domain/api/webhooks/stripe` with these events:
 
-To learn more about Next.js, take a look at the following resources:
+- `checkout.session.completed`
+- `checkout.session.expired`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The v1 submission rate limiter is process-local. Replace it with a shared Redis-backed limiter before running at enough scale that requests regularly cross multiple serverless instances.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Demo data
 
-## Deploy on Vercel
+Populate the board with the tagged pre-release dataset:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run db:seed
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Before launch, remove only demo listings and their demo bid entries while preserving categories and real data:
+
+```bash
+npm run db:demo:clear
+```
