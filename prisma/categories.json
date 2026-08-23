@@ -1,0 +1,14 @@
+[
+  { "slug": "seo-ai", "name": "SEO & AI Visibility", "mark": "SV", "sortOrder": 1 },
+  { "slug": "ai-agents", "name": "AI Agents & Infrastructure", "mark": "AI", "sortOrder": 2 },
+  { "slug": "ai-media", "name": "AI Media Generation", "mark": "MG", "sortOrder": 3 },
+  { "slug": "marketing", "name": "Marketing & Advertising", "mark": "MA", "sortOrder": 4 },
+  { "slug": "developer-tools", "name": "Developer Tools", "mark": "DT", "sortOrder": 5 },
+  { "slug": "productivity", "name": "Productivity & Personal Tools", "mark": "PX", "sortOrder": 6 },
+  { "slug": "design", "name": "Design & Creative", "mark": "DC", "sortOrder": 7 },
+  { "slug": "finance", "name": "Business, Finance & Legal", "mark": "BF", "sortOrder": 8 },
+  { "slug": "education", "name": "Education & Learning", "mark": "EL", "sortOrder": 9 },
+  { "slug": "health", "name": "Health, Fitness & Wellness", "mark": "HW", "sortOrder": 10 },
+  { "slug": "games", "name": "Games & Entertainment", "mark": "GE", "sortOrder": 11 },
+  { "slug": "other", "name": "Other Products", "mark": "OP", "sortOrder": 12 }
+]

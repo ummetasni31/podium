@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Listing {
+  id            String    @id @default(cuid())
+  url           String
+  normalizedUrl String    @unique @map("normalized_url")
+  displayName   String    @map("display_name")
+  description   String?
+  logoData      Bytes?    @map("logo_data")
+  logoMimeType  String?   @map("logo_mime_type")
+  categorySlug  String?   @map("category")
+  category      Category? @relation(fields: [categorySlug], references: [slug], onDelete: SetNull)
+  totalBidCents Int       @default(0) @map("total_bid_cents")
+  clickCount    Int       @default(0) @map("click_count")
+  isDemo        Boolean   @default(false) @map("is_demo")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  bids          Bid[]
+
+  @@index([totalBidCents, createdAt])
+  @@map("listings")
+}
+
+model Category {
+  slug      String    @id
+  name      String
+  mark      String
+  sortOrder Int       @default(0) @map("sort_order")
+  createdAt DateTime  @default(now()) @map("created_at")
+  listings  Listing[]
+
+  @@index([sortOrder])
+  @@map("categories")
+}
+
+model Bid {
+  id              String   @id @default(cuid())
+  listingId       String   @map("listing_id")
+  listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Restrict)
+  amountCents     Int      @map("amount_cents")
+  stripeSessionId String   @unique @map("stripe_session_id")
+  status          String   @default("pending")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([listingId, createdAt])
+  @@map("bids")
+}
